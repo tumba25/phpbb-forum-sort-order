@@ -21,13 +21,20 @@ Adds possibility to override user sort settings in some forums.</description>
 				<homepage>http://skripter.se</homepage>
 			</author>
 		</author-group>
-		<mod-version>1.1.1</mod-version>
+		<mod-version>1.1.2</mod-version>
 		<installation>
 			<level>intermediate</level>
 			<time>1200</time>
 			<target-version>3.0.4</target-version>
 		</installation>
 		<history>
+			<entry>
+				<date>2009-02-01</date>
+				<rev-version>1.1.2</rev-version>
+				<changelog lang="en-gb">
+					<change>Topic Sort Order added to search results.</change>
+				</changelog>
+			</entry>
 			<entry>
 				<date>2009-01-31</date>
 				<rev-version>1.1.1</rev-version>
@@ -94,7 +101,31 @@ Adds possibility to override user sort settings in some forums.</description>
 		<open src="mcp.php">
 			<edit>
 				<find><![CDATA[	$sort_key = request_var('sk', $default_key);]]></find>
-				<action type="after-add"><![CDATA[	$sort_key = ($sort_key == 'm') ? 'tt' : $sort_key;]]></action>
+				<action type="after-add"><![CDATA[	// BEGIN Forum sort order
+	$sort_key = ($sort_key == 'm') ? 'tt' : $sort_key;
+	// END Forum sort order]]></action>
+			</edit>
+		</open>
+		<open src="search.php">
+			<edit>
+				<find><![CDATA[$sort_dir		= request_var('sd', 'd');]]></find>
+				<action type="after-add"><![CDATA[// BEGIN Forum sort order
+$show_results	= ($sort_key == 'm') ? 'topics' : $show_results;
+// END Forum sort order]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[$sort_by_text	= array('a' => $user->lang['SORT_AUTHOR'], 't' => $user->lang['SORT_TIME'], 'f' => $user->lang['SORT_FORUM'], 'i' => $user->lang['SORT_TOPIC_TITLE'], 's' => $user->lang['SORT_POST_SUBJECT']);]]></find>
+				<inline-edit>
+					<inline-find><![CDATA['t' => $user->lang['SORT_TIME']]]></inline-find>
+					<inline-action type="after-add"><![CDATA[, 'm' => $user->lang['SORT_TOPIC_TIME']]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[$sort_by_sql = array('a' => 'u.username_clean', 't' => (($show_results == 'posts') ? 'p.post_time' : 't.topic_last_post_time'), 'f' => 'f.forum_id', 'i' => 't.topic_title', 's' => (($show_results == 'posts') ? 'p.post_subject' : 't.topic_title'));]]></find>
+				<inline-edit>
+					<inline-find><![CDATA['p.post_time' : 't.topic_last_post_time')]]></inline-find>
+					<inline-action type="after-add"><![CDATA[, 'm' => (($show_results == 'posts') ? 'p.post_time' : 't.topic_time')]]></inline-action>
+				</inline-edit>
 			</edit>
 		</open>
 		<open src="viewforum.php">

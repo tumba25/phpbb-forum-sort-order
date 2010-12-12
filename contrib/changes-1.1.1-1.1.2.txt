@@ -1,0 +1,66 @@
+##############################################################
+## MOD Title: Forum Sort Order 1.1.1 -> 1.1.2
+## MOD Author: tumba25
+## MOD Description:
+##
+## Codechanges from 1.1.1 to 1.1.2
+##
+## MOD Version: 1.1.2
+##
+## Files To Edit:
+## search.php
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+#
+#-----[ Open ]---------------------------------------------
+#
+search.php
+
+#
+#-----[ Find ]---------------------------------------------
+#
+$sort_dir		= request_var('sd', 'd');
+
+#
+#-----[ After add ]---------------------------------------------
+#
+// BEGIN Forum sort order
+$show_results	= ($sort_key == 'm') ? 'topics' : $show_results;
+// END Forum sort order
+
+#
+#-----[ Find ]---------------------------------------------
+#
+$sort_by_text	= array('a' => $user->lang['SORT_AUTHOR'], 't' => $user->lang['SORT_TIME'], 'f' => $user->lang['SORT_FORUM'], 'i' => $user->lang['SORT_TOPIC_TITLE'], 's' => $user->lang['SORT_POST_SUBJECT']);
+
+#
+#-----[ In-line Find ]---------------------------------------------
+#
+'t' => $user->lang['SORT_TIME']
+
+#
+#-----[ In-line After add ]---------------------------------------------
+#
+, 'm' => $user->lang['SORT_TOPIC_TIME']
+
+#
+#-----[ Find ]---------------------------------------------
+#
+$sort_by_sql = array('a' => 'u.username_clean', 't' => (($show_results == 'posts') ? 'p.post_time' : 't.topic_last_post_time'), 'f' => 'f.forum_id', 'i' => 't.topic_title', 's' => (($show_results == 'posts') ? 'p.post_subject' : 't.topic_title'));
+
+#
+#-----[ In-line Find ]---------------------------------------------
+#
+'p.post_time' : 't.topic_last_post_time')
+
+#
+#-----[ In-line After add ]---------------------------------------------
+#
+, 'm' => (($show_results == 'posts') ? 'p.post_time' : 't.topic_time')
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM

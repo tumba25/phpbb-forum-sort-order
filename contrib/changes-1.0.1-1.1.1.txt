@@ -27,7 +27,9 @@ mcp.php
 #
 #-----[ After add ]---------------------------------------------
 #
+	// BEGIN Forum sort order
 	$sort_key = ($sort_key == 'm') ? 'tt' : $sort_key;
+	// END Forum sort order
 
 #
 #-----[ Open ]---------------------------------------------
