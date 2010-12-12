@@ -1,0 +1,16 @@
+##############################################################
+## MOD Title: Forum Sort Order 1.1.2 -> 1.1.3
+## MOD Author: tumba25
+## MOD Description:
+##
+## Codechanges from 1.1.2 to 1.1.3
+##
+## MOD Version: 1.1.3
+##
+## Files To Edit:
+## None
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+There are no code-changes. Just an edit in the install_mod.xml to comply with AutoMOD
