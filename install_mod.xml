@@ -21,7 +21,7 @@ Adds possibility to override user sort settings in some forums.</description>
 				<homepage>http://skripter.se</homepage>
 			</author>
 		</author-group>
-		<mod-version>1.1.3</mod-version>
+		<mod-version>1.2.0</mod-version>
 		<installation>
 			<level>intermediate</level>
 			<time>1200</time>
@@ -29,23 +29,11 @@ Adds possibility to override user sort settings in some forums.</description>
 		</installation>
 		<history>
 			<entry>
-				<date>2009-02-01</date>
-				<rev-version>1.1.3</rev-version>
+				<date>2009-02-10</date>
+				<rev-version>1.2.0</rev-version>
 				<changelog lang="en-gb">
 					<change>Installs with AutoMOD</change>
-				</changelog>
-			</entry>
-			<entry>
-				<date>2009-02-01</date>
-				<rev-version>1.1.2</rev-version>
-				<changelog lang="en-gb">
 					<change>Topic Sort Order added to search results.</change>
-				</changelog>
-			</entry>
-			<entry>
-				<date>2009-01-31</date>
-				<rev-version>1.1.1</rev-version>
-				<changelog lang="en-gb">
 					<change>Topic Sort Order follows through into MCP and retains the sorting order from viewforum.php.</change>
 					<change>Modx 1.2.2.</change>
 				</changelog>
