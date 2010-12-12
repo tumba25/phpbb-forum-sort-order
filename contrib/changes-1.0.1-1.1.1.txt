@@ -1,0 +1,55 @@
+##############################################################
+## MOD Title: Forum Sort Order 1.0.1 -> 1.1.1
+## MOD Author: tumba25
+## MOD Description:
+##
+## Codechanges from 1.0.1 to 1.1.1
+##
+## MOD Version: 1.1.1
+##
+## Files To Edit:
+## viewforum.php
+## mcp.php
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+#
+#-----[ Open ]---------------------------------------------
+#
+mcp.php
+
+#
+#-----[ Find ]---------------------------------------------
+#
+	$sort_key = request_var('sk', $default_key);
+
+#
+#-----[ After add ]---------------------------------------------
+#
+	$sort_key = ($sort_key == 'm') ? 'tt' : $sort_key;
+
+#
+#-----[ Open ]---------------------------------------------
+#
+viewforum.php
+
+#
+#-----[ Find ]---------------------------------------------
+#
+	'U_MCP'				=> ($auth->acl_get('m_', $forum_id)) ? append_sid("{$phpbb_root_path}mcp.$phpEx", "f=$forum_id&amp;i=main&amp;mode=forum_view", true, $user->session_id) : '',
+
+#
+#-----[ In-line Find ]---------------------------------------------
+#
+mode=forum_view
+
+#
+#-----[ In-line After add ]---------------------------------------------
+#
+&amp;st={$sort_days}&amp;sk={$sort_key}&amp;sd={$sort_dir}
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM
