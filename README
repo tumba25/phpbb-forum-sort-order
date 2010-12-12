@@ -1,0 +1,4 @@
+Adds topic time in UCP > Board preferences and viewtopic > Sort by.
+Also adds Forum default to UCP > Board preferences and makes this default for all users.
+Adds "Default topic list order:" to ACP > Forums > Edit forum, this might be overridden by the settings in UCP.
+Adds possibility to override user sort settings in some forums.
