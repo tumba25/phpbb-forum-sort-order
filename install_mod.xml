@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<?xml-stylesheet type="text/xsl" href="./contrib/modx.prosilver.en.xsl"?>
+<?xml-stylesheet type="text/xsl" href="./modx.prosilver.en.xsl"?>
 <!--
 	NOTICE: Please open this file in your web browser. If presented with a security warning, you may safely tell it to allow the blocked content.
 -->
@@ -21,13 +21,20 @@ Adds possibility to override user sort settings in some forums.</description>
 				<homepage>http://skripter.se</homepage>
 			</author>
 		</author-group>
-		<mod-version>1.2.0</mod-version>
+		<mod-version>1.2.1</mod-version>
 		<installation>
 			<level>intermediate</level>
 			<time>1200</time>
 			<target-version>3.0.4</target-version>
 		</installation>
 		<history>
+			<entry>
+				<date>2009-02-10</date>
+				<rev-version>1.2.1</rev-version>
+				<changelog lang="en-gb">
+					<change>Small bugfix</change>
+				</changelog>
+			</entry>
 			<entry>
 				<date>2009-02-10</date>
 				<rev-version>1.2.0</rev-version>
@@ -133,7 +140,7 @@ $from_viewforum = (request_var('sort', '') == $user->lang['GO']) ? 1 : 0;
 			<edit>
 				<find><![CDATA[// Topic ordering options]]></find>
 				<action type="after-add"><![CDATA[// BEGIN Forum sort order
-if($forum_data['user_sort_override'] && $from_viewforum)
+if($forum_data['user_sort_override'] && !$from_viewforum)
 {
 	$sort_key = $forum_data['topic_list_order'];
 	$sort_dir = $forum_data['topic_list_dir'];
