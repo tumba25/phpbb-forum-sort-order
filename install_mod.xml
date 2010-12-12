@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml-stylesheet type="text/xsl" href="modx.prosilver.en.xsl"?>
+<!--For security purposes, please check: http://www.phpbb.com/mods/ for the latest version of this MOD. Although MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD. No support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.0.xsd">
+	<header>
+		<license>GNU General Public License v2</license>
+		<title lang="en-gb">Forum sort order</title>
+		<description lang="en-gb"><![CDATA[Adds topic time in UCP > Board preferences and viewtopic > Sort by.
+Also adds Forum default to UCP > Board preferences and makes this default for all users.
+Adds "Default topic list order:" to ACP > Forums > Edit forum, this might be overriden by the settings in UCP.
+Adds possibility to override user sort settings in some forums.]]></description>
+		<author-group>
+			<author>
+				<realname>Jari Kanerva</realname>
+				<email>tumba25@gmail.com</email>
+				<username>tumba25</username>
+				<homepage>http://testforum.vilden.se</homepage>
+			</author>
+		</author-group>
+		<mod-version>
+			<major>1</major>
+			<minor>0</minor>
+			<revision>1</revision>
+		</mod-version>
+		<installation>
+			<level>intermediate</level>
+			<time>1200</time>
+			<target-version>
+				<target-primary>3.0</target-primary>
+				<target-major allow="exact">3</target-major>
+				<target-minor allow="exact">0</target-minor>
+			</target-version>
+		</installation>
+		<history>
+			<entry>
+				<date>2007-10-10</date>
+				<rev-version>
+					<major>1</major>
+					<minor>0</minor>
+					<revision>1</revision>
+				</rev-version>
+				<changelog lang="en-gb">
+					<change>Fixed some bugs.</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2007-08-05</date>
+				<rev-version>
+					<major>1</major>
+					<minor>0</minor>
+					<revision>0</revision>
+					<release>c</release>
+				</rev-version>
+				<changelog lang="en-gb">
+					<change>Forgott som minor things in the xml-file.</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2007-08-05</date>
+				<rev-version>
+					<major>1</major>
+					<minor>0</minor>
+					<revision>0</revision>
+				</rev-version>
+				<changelog lang="en-gb">
+					<change>Submited to the MODs db for aproval.</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2007-07-11</date>
+				<rev-version>
+					<major>0</major>
+					<minor>8</minor>
+					<revision>3</revision>
+				</rev-version>
+				<changelog lang="en-gb">
+					<change>Added possibility to override user settings for topics sort order in ACP</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2007-07-10</date>
+				<rev-version>
+					<major>0</major>
+					<minor>8</minor>
+					<revision>2</revision>
+				</rev-version>
+				<changelog lang="en-gb">
+					<change>Fixed a bug in the third part in "includes/acp/acp_forums.php". forum_status should be topic_list_dir. Removed blank lines after the inserts.</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2007-07-09</date>
+				<rev-version>
+					<major>0</major>
+					<minor>8</minor>
+					<revision>1</revision>
+				</rev-version>
+				<changelog lang="en-gb">
+					<change>Added the changes in language/en/common.php to the xml-file, ooops. And removed one line from language/en/ucp.php</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2007-07-07</date>
+				<rev-version>
+					<major>0</major>
+					<minor>8</minor>
+					<revision>0</revision>
+				</rev-version>
+				<changelog lang="en-gb">
+					<change>The first beta-release.</change>
+				</changelog>
+			</entry>
+		</history>
+	</header>
+	<action-group>
+		<sql><![CDATA[ALTER TABLE phpbb_forums ADD topic_list_order varchar(1) character set utf8 collate utf8_bin NOT NULL DEFAULT 't', ADD topic_list_dir varchar(1) character set utf8 collate utf8_bin NOT NULL DEFAULT 'd', ADD user_sort_override tinyint(1) UNSIGNED NOT NULL DEFAULT 0;]]></sql>
+		<sql><![CDATA[ALTER TABLE phpbb_users CHANGE user_topic_sortby_type user_topic_sortby_type varchar(1) character set utf8 collate utf8_bin NOT NULL DEFAULT 'b', CHANGE user_topic_sortby_dir user_topic_sortby_dir varchar(1) character set utf8 collate utf8_bin NOT NULL DEFAULT 'b';]]></sql>
+		<sql><![CDATA[UPDATE phpbb_users SET user_topic_sortby_type = 'b', user_topic_sortby_dir = 'b' WHERE user_topic_sortby_type = 't';]]></sql>
+		<open src="viewforum.php">
+			<edit>
+				<find><![CDATA[$user->setup('viewforum', $forum_data['forum_style']);]]></find>
+				<action type="after-add"><![CDATA[// BEGIN Forum sort order
+$from_viewforum = (request_var('sort', '') == $user->lang['GO']) ? 1 : 0;
+// END Forum sort order]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[// Topic ordering options]]></find>
+				<action type="after-add"><![CDATA[// BEGIN Forum sort order
+if($forum_data['user_sort_override'] && $from_viewforum)
+{
+	$sort_key = $forum_data['topic_list_order'];
+	$sort_dir = $forum_data['topic_list_dir'];
+}
+else
+{
+	$sort_key = ($sort_key == 'b') ? $forum_data['topic_list_order'] : $sort_key;
+	$sort_dir = ($sort_dir == 'b') ? $forum_data['topic_list_dir'] : $sort_dir;
+}
+// END Forum sort order]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[$sort_by_text = array('a' => $user->lang['AUTHOR'], 't' => $user->lang['POST_TIME'], 'r' => $user->lang['REPLIES'], 's' => $user->lang['SUBJECT'], 'v' => $user->lang['VIEWS']);]]></find>
+        <inline-edit>
+            <inline-find><![CDATA['t' => $user->lang['POST_TIME'],]]></inline-find>
+            <inline-action type="after-add"><![CDATA[ 'm' => $user->lang['SORT_TOPIC_TIME'],]]></inline-action>
+        </inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[$sort_by_sql = array('a' => 't.topic_first_poster_name', 't' => 't.topic_last_post_time', 'r' => 't.topic_replies', 's' => 't.topic_title', 'v' => 't.topic_views');]]></find>
+        <inline-edit>
+            <inline-find><![CDATA['t' => 't.topic_last_post_time',]]></inline-find>
+            <inline-action type="after-add"><![CDATA[ 'm' => 't.topic_time',]]></inline-action>
+        </inline-edit>
+			</edit>
+		</open>
+		<open src="adm/style/acp_forums.html">
+			<edit>
+				<find><![CDATA[		<dl>
+			<dt><label for="topics_per_page">{L_FORUM_TOPICS_PAGE}:</label><br /><span>{L_FORUM_TOPICS_PAGE_EXPLAIN}</span></dt>
+			<dd><input type="text" id="topics_per_page" name="topics_per_page" value="{TOPICS_PER_PAGE}" size="4" maxlength="4" /></dd>
+		</dl>]]></find>
+				<action type="after-add"><![CDATA[		<dl>
+			<dt><label for="topic_list_order">{L_TOPIC_LIST_ORDER}:</label><br /><span>{L_TOPIC_LIST_ORDER_EXPLAIN}</span></dt>
+			<dd><select id="topic_list_order" name="topic_list_order">{S_TOPIC_LIST_ORDER}</select>&nbsp;&nbsp;<select id="topic_list_dir" name="topic_list_dir">{S_TOPIC_LIST_DIR}</select></dd>
+		</dl>
+		<dl>
+			<dt><label for="user_sort_override">{L_OVERRIDE_USER_SORT_ORDER}:</label><br /><span>{L_OVERRIDE_USER_SORT_ORDER_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" name="user_sort_override" value="1"<!-- IF S_USER_SORT_OVERRIDE --> id="user_sort_override" checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="user_sort_override" value="0"<!-- IF not S_USER_SORT_OVERRIDE --> id="user_sort_override" checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>]]></action>
+			</edit>
+		</open>
+		<open src="includes/acp/acp_forums.php">
+			<edit>
+				<find><![CDATA['forum_password_confirm'=> request_var('forum_password_confirm', '', true),]]></find>
+				<action type="after-add"><![CDATA[// BEGIN Forum sort order
+						'user_sort_override' => request_var('user_sort_override', 0),
+						'topic_list_order' => request_var('topic_list_order', 't'),
+						'topic_list_dir' => request_var('topic_list_dir', 'd'),
+// END Forum sort order]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							'forum_password_confirm'=> '',]]></find>
+				<action type="after-add"><![CDATA[// BEGIN Forum sort order
+							'user_sort_override' => 0,
+							'topic_list_order' => 't',
+							'topic_list_dir' => 'd',
+// END Forum sort order]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				$statuslist = '<option value="' . ITEM_UNLOCKED . '"' . (($forum_data['forum_status'] == ITEM_UNLOCKED) ? ' selected="selected"' : '') . '>' . $user->lang['UNLOCKED'] . '</option><option value="' . ITEM_LOCKED . '"' . (($forum_data['forum_status'] == ITEM_LOCKED) ? ' selected="selected"' : '') . '>' . $user->lang['LOCKED'] . '</option>';]]></find>
+				<action type="after-add"><![CDATA[// BEGIN Forum sort order
+				$user_sort_override = ($forum_data['user_sort_override'] == 1) ? 1 : 0;
+				$topic_list_set = ($forum_data['topic_list_order'] == '') ? 't' : $forum_data['topic_list_order'];
+				$topic_list_order = '<option value="a"' . (($forum_data['topic_list_order'] == 'a') ? ' selected="selected"' : '') . '>' . $user->lang['AUTHOR'] . '</option><option value="t"' . (($forum_data['topic_list_order'] == 't') ? ' selected="selected"' : '') . '>' . $user->lang['POST_TIME'] . '</option><option value="m"' . (($forum_data['topic_list_order'] == 'm') ? ' selected="selected"' : '') . '>' . $user->lang['SORT_TOPIC_TIME'] . '</option><option value="r"' . (($forum_data['topic_list_order'] == 'r') ? ' selected="selected"' : '') . '>' . $user->lang['REPLIES'] . '</option><option value="s"' . (($forum_data['topic_list_order'] == 's') ? ' selected="selected"' : '') . '>' . $user->lang['SUBJECT'] . '</option><option value="v"' . (($forum_data['topic_list_order'] == 'v') ? ' selected="selected"' : '') . '>' . $user->lang['VIEWS'] . '</option>';
+
+				$topic_list_set = ($forum_data['topic_list_dir'] == '') ? 'd' : $forum_data['topic_list_dir'];
+				$topic_list_dir = '<option value="a"' . (($forum_data['topic_list_dir'] == 'a') ? ' selected="selected"' : '') . '>' . $user->lang['ASCENDING'] . '</option><option value="d"' . (($forum_data['topic_list_dir'] == 'a') ? '' : ' selected="selected"') . '>' . $user->lang['DESCENDING'] . '</option>';
+// END Forum sort order]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					'S_STATUS_OPTIONS'			=> $statuslist,]]></find>
+				<action type="after-add"><![CDATA[// BEGIN Forum sort order
+					'S_USER_SORT_OVERRIDE' => $user_sort_override,
+					'S_TOPIC_LIST_ORDER' => $topic_list_order,
+					'S_TOPIC_LIST_DIR' => $topic_list_dir,
+// END Forum sort order]]></action>
+			</edit>
+		</open>
+		<open src="includes/acp/acp_users.php">
+			<edit>
+				<find><![CDATA[				$sort_dir_text = array('a' => $user->lang['ASCENDING'], 'd' => $user->lang['DESCENDING']);]]></find>
+				<inline-edit>
+            <inline-find><![CDATA[$sort_dir_text = array(]]></inline-find>
+            <inline-action type="after-add"><![CDATA['b' => $user->lang['BOARD_DEFAULT'], ]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				$sort_by_topic_text = array('a' => $user->lang['AUTHOR'], 't' => $user->lang['POST_TIME'], 'r' => $user->lang['REPLIES'], 's' => $user->lang['SUBJECT'], 'v' => $user->lang['VIEWS']);]]></find>
+        <inline-edit>
+            <inline-find><![CDATA[$sort_by_topic_text = array(]]></inline-find>
+            <inline-action type="after-add"><![CDATA['b' => $user->lang['BOARD_DEFAULT'], ]]></inline-action>
+        </inline-edit>
+        <inline-edit>
+            <inline-find><![CDATA['t' => $user->lang['POST_TIME'],]]></inline-find>
+            <inline-action type="after-add"><![CDATA[ 'm' => $user->lang['SORT_TOPIC_TIME'],]]></inline-action>
+        </inline-edit>
+			</edit>
+		</open>
+		<open src="includes/ucp/ucp_prefs.php">
+			<edit>
+				<find><![CDATA[				$sort_dir_text = array('a' => $user->lang['ASCENDING'], 'd' => $user->lang['DESCENDING']);]]></find>
+        <inline-edit>
+            <inline-find><![CDATA[$sort_dir_text = array(]]></inline-find>
+            <inline-action type="after-add"><![CDATA['b' => $user->lang['BOARD_DEFAULT'], ]]></inline-action>
+        </inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				$sort_by_topic_text = array('a' => $user->lang['AUTHOR'], 't' => $user->lang['POST_TIME'], 'r' => $user->lang['REPLIES'], 's' => $user->lang['SUBJECT'], 'v' => $user->lang['VIEWS']);]]></find>
+        <inline-edit>
+            <inline-find><![CDATA[$sort_by_topic_text = array(]]></inline-find>
+            <inline-action type="after-add"><![CDATA['b' => $user->lang['BOARD_DEFAULT'], ]]></inline-action>
+        </inline-edit>
+        <inline-edit>
+            <inline-find><![CDATA['t' => $user->lang['POST_TIME'],]]></inline-find>
+            <inline-action type="after-add"><![CDATA[ 'm' => $user->lang['SORT_TOPIC_TIME'],]]></inline-action>
+        </inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				$sort_by_topic_sql = array('a' => 't.topic_first_poster_name', 't' => 't.topic_last_post_time', 'r' => 't.topic_replies', 's' => 't.topic_title', 'v' => 't.topic_views');]]></find>
+        <inline-edit>
+            <inline-find><![CDATA['t' => 't.topic_last_post_time',]]></inline-find>
+            <inline-action type="after-add"><![CDATA[ 'm' => 't.topic_time',]]></inline-action>
+        </inline-edit>
+			</edit>
+		</open>
+		<open src="language/en/common.php">
+			<edit>
+				<find><![CDATA[));]]></find>
+				<action type="before-add"><![CDATA[	'SORT_TOPIC_TIME' => 'Topic time',]]></action>
+			</edit>
+		</open>
+		<open src="language/en/ucp.php">
+			<edit>
+				<find><![CDATA[	'NO_NONMEMBER'	=> 'No non-member groups',]]></find>
+				<action type="after-add"><![CDATA[	'BOARD_DEFAULT' => 'Forum default',]]></action>
+			</edit>
+		</open>
+		<open src="language/en/acp/forums.php">
+			<edit>
+				<find><![CDATA[));]]></find>
+				<action type="before-add"><![CDATA[	'TOPIC_LIST_ORDER' => 'Default topic list order',
+	'TOPIC_LIST_ORDER_EXPLAIN' => 'Choose what topics should be ordered by. Default is by last post. User settings will override this setting.',
+	'OVERRIDE_USER_SORT_ORDER' => 'Override users topic order setting',
+	'OVERRIDE_USER_SORT_ORDER_EXPLAIN' => 'Select this to override the users topic order setting. But use this with care since some users might not be to happy about this.',]]></action>
+			</edit>
+		</open>
+		<diy-instructions lang="en-gb">Add the same lines to language/LANG/common.php, language/LANG/ucp.php and language/LANG/acp/forums.php in every installed language.
+Remeber to purge the cache in ACP > general.</diy-instructions>
+	</action-group>
+</mod>
